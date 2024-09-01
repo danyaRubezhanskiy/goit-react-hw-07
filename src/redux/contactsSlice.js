@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import {
+  apiAddContact,
+  apiDeleteContact,
+  apiGetAllContacts,
+} from "./contactsOps";
 
-const initialContacts = [
-  { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-  { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-  { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-  { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
-];
+const initialContacts = [];
 
 const contactsSlice = createSlice({
   name: "contacts",
@@ -14,15 +14,47 @@ const contactsSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {
-    addContact: (state, action) => {
-      state.items.push(action.payload);
-    },
-    deleteContact: (state, action) => {
-      state.items = state.items.filter(
-        (contact) => contact.id !== action.payload
-      );
-    },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(apiGetAllContacts.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(apiGetAllContacts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+      })
+      .addCase(apiGetAllContacts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(apiAddContact.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(apiAddContact.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items.push(action.payload);
+      })
+      .addCase(apiAddContact.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(apiDeleteContact.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(apiDeleteContact.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = state.items.filter(
+          (contact) => contact.id !== action.payload.id
+        );
+      })
+      .addCase(apiDeleteContact.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
