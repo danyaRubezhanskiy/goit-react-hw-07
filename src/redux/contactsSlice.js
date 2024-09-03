@@ -4,6 +4,8 @@ import {
   apiDeleteContact,
   apiGetAllContacts,
 } from "./contactsOps";
+import { useSelector } from "react-redux";
+import { selectNameFilter } from "./filtersSlice";
 
 const initialContacts = [];
 
@@ -60,10 +62,9 @@ const contactsSlice = createSlice({
 
 export const { addContact, deleteContact } = contactsSlice.actions;
 export const selectContacts = (state) => state.contacts.items;
-export const selectFilter = (state) => state.filter;
 
 export const selectFilteredContacts = createSelector(
-  [selectContacts, selectFilter],
+  [selectContacts, selectNameFilter],
   (contacts, filter) => {
     if (!filter) {
       return contacts;
